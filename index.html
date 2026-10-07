@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Números de Catalan</title>
+<meta name="description" content="Guía interactiva y clara de los números de Catalan: definición, fórmulas, ejemplos y ejercicios.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f5ff; --card:#ffffff; --ink:#1f1d2b; --muted:#5d5a72;
+    --accent:#7c4dff; --accent-soft:#ede6ff; --pink:#ff5c93; --green:#16a36a;
+    --red:#e0434b; --line:#e2ddf5; --code:#f1eefc;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#14121d; --card:#1e1b2b; --ink:#ece9f7; --muted:#a8a3c2;
+      --accent:#a689ff; --accent-soft:#2c2545; --pink:#ff7aa8; --green:#3ccf8e;
+      --red:#ff6b72; --line:#332d4a; --code:#262138;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,sans-serif;line-height:1.65;font-size:17px}
+  header{background:linear-gradient(135deg,var(--accent),var(--pink));color:#fff;padding:56px 16px 48px;text-align:center}
+  header h1{margin:0 0 8px;font-size:clamp(2rem,6vw,3.2rem);font-weight:800}
+  header p{margin:0 auto;max-width:640px;font-size:1.1rem;opacity:.95}
+  .seq{font-family:"JetBrains Mono",monospace;margin-top:18px;font-size:1.05rem;letter-spacing:.5px;background:rgba(255,255,255,.18);display:inline-block;padding:8px 16px;border-radius:999px}
+  nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;padding:10px 16px}
+  nav a{color:var(--muted);text-decoration:none;font-weight:600;margin-right:18px;font-size:.95rem}
+  nav a:hover{color:var(--accent)}
+  main{max-width:900px;margin:0 auto;padding:24px 16px 80px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 24px;margin:22px 0;scroll-margin-top:60px}
+  h2{margin:0 0 12px;font-size:1.55rem;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--accent);color:#fff;border-radius:50%;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;flex:none}
+  h3{margin:20px 0 8px;font-size:1.15rem}
+  .formula{background:var(--accent-soft);border-radius:12px;padding:16px;text-align:center;font-size:1.25rem;margin:14px 0;overflow-x:auto}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 4px}
+  .frac>span:first-child{border-bottom:2px solid currentColor;padding:0 6px}
+  .frac>span:last-child{padding:0 6px}
+  code,.mono{font-family:"JetBrains Mono",monospace;background:var(--code);padding:1px 6px;border-radius:6px;font-size:.92em}
+  .tip{border-left:5px solid var(--pink);background:var(--accent-soft);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0}
+  .tip b{color:var(--pink)}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:.98rem}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+  th{background:var(--accent-soft)}
+  .table-wrap{overflow-x:auto}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+  input[type=number]{width:90px;padding:8px 10px;border-radius:10px;border:2px solid var(--line);font-size:1rem;background:var(--bg);color:var(--ink);font-family:inherit}
+  button{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:9px 16px;font-weight:700;font-family:inherit;font-size:.95rem;cursor:pointer}
+  button:hover{filter:brightness(1.08)}
+  button.ghost{background:var(--accent-soft);color:var(--accent)}
+  .pill{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 12px;font-weight:700}
+  .steps{background:var(--bg);border:1px dashed var(--line);border-radius:12px;padding:14px 16px;margin-top:10px;font-family:"JetBrains Mono",monospace;font-size:.92rem;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+  .big{font-size:1.6rem;font-weight:800;color:var(--accent);word-break:break-all}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+  .item{border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;background:var(--bg)}
+  .item .mono{display:block;margin-bottom:6px;background:none}
+  svg{max-width:100%;height:auto}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:10px}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px}
+  .card h4{margin:0 0 6px}
+  .quiz-q{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;background:var(--bg)}
+  .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .opts button{background:var(--card);color:var(--ink);border:2px solid var(--line)}
+  .opts button.ok{border-color:var(--green);background:var(--green);color:#fff}
+  .opts button.bad{border-color:var(--red);background:var(--red);color:#fff}
+  .fb{margin-top:8px;font-weight:600;min-height:1.4em}
+  .fb.ok{color:var(--green)} .fb.bad{color:var(--red)}
+  .score{font-size:1.2rem;font-weight:800;text-align:center;margin-top:10px}
+  details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0;background:var(--bg)}
+  summary{cursor:pointer;font-weight:700}
+  ul.check{list-style:none;padding:0}
+  ul.check li{padding-left:28px;position:relative;margin:6px 0}
+  ul.check li::before{content:"✓";position:absolute;left:4px;color:var(--green);font-weight:800}
+  .prob{border:1px solid var(--line);border-radius:16px;padding:18px;margin:18px 0;background:var(--bg)}
+  .prob h3{margin-top:0}
+  .tag{display:inline-block;font-size:.78rem;font-weight:800;border-radius:999px;padding:2px 10px;margin-right:6px;background:var(--accent-soft);color:var(--accent)}
+  .code-wrap{position:relative;margin:10px 0}
+  pre.cpp{background:#1b1828;color:#ece8ff;padding:16px;border-radius:12px;overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:.84rem;line-height:1.55;margin:0;tab-size:4}
+  pre.cpp .cm{color:#8f8ab0;font-style:italic}
+  pre.cpp .kw{color:#ff8fb8}
+  pre.cpp .ty{color:#9fd8ff}
+  pre.cpp .st{color:#b6f0a0}
+  pre.cpp .nu{color:#ffd28a}
+  pre.cpp .pp{color:#c7a6ff}
+  .copy{position:absolute;top:8px;right:8px;padding:5px 10px;font-size:.8rem;background:#3a3354}
+  .term{background:#0f0e16;color:#7dffb0;font-family:"JetBrains Mono",monospace;font-size:.85rem;border-radius:12px;padding:12px 14px;white-space:pre-wrap;max-height:260px;overflow:auto;margin-top:8px}
+  .term::before{content:"Salida del programa:\A";color:#8f8ab0;white-space:pre}
+  footer{text-align:center;color:var(--muted);font-size:.9rem;padding:20px 16px 40px}
+  @media (max-width:560px){section{padding:20px 16px} .formula{font-size:1.05rem}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Números de Catalan</h1>
+  <p>Guía para Yaretzi: todo lo que necesitas para entender el tema y explicarlo en clase con seguridad.</p>
+  <div class="seq">1, 1, 2, 5, 14, 42, 132, 429, 1430, …</div>
+</header>
+
+<nav>
+  <a href="#que">¿Qué son?</a>
+  <a href="#formula">Fórmula</a>
+  <a href="#recurrencia">Recurrencia</a>
+  <a href="#parentesis">Paréntesis</a>
+  <a href="#montanas">Montañas</a>
+  <a href="#poligonos">Polígonos</a>
+  <a href="#porque">¿Por qué funciona?</a>
+  <a href="#calc">Calculadora</a>
+  <a href="#cpp">C++</a>
+  <a href="#quiz">Practica</a>
+  <a href="#resumen">Resumen</a>
+</nav>
+
+<main>
+
+<!-- 1 -->
+<section id="que">
+  <h2><span class="num">1</span>¿Qué son los números de Catalan?</h2>
+  <p>Los <b>números de Catalan</b> son una lista de números que aparece una y otra vez cuando contamos <b>formas de organizar cosas sin que se “rompa” una regla</b>. Se llaman así por el matemático belga <b>Eugène Catalan</b> (siglo XIX).</p>
+  <p>Se escriben <b>C<sub>n</sub></b>, donde <b>n</b> es la posición (empezamos a contar desde 0):</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>n</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+    <tr><th>C<sub>n</sub></th><td>1</td><td>1</td><td>2</td><td>5</td><td>14</td><td>42</td><td>132</td><td>429</td><td>1430</td></tr>
+  </table>
+  </div>
+  <div class="tip"><b>Idea clave:</b> C<sub>n</sub> responde preguntas como “¿de cuántas maneras puedo acomodar <b>n</b> pares de paréntesis correctamente?” o “¿de cuántas maneras puedo partir un polígono en triángulos?”. Problemas que parecen distintos… ¡dan exactamente los mismos números!</div>
+</section>
+
+<!-- 2 -->
+<section id="formula">
+  <h2><span class="num">2</span>La fórmula directa</h2>
+  <p>Para calcular cualquier número de Catalan se usa:</p>
+  <div class="formula">
+    C<sub>n</sub> =
+    <span class="frac"><span>1</span><span>n + 1</span></span>
+    · <span class="frac"><span>(2n)!</span><span>n! · n!</span></span>
+    =
+    <span class="frac"><span>(2n)!</span><span>(n + 1)! · n!</span></span>
+  </div>
+  <p>Recuerda: el <b>factorial</b> <code>n!</code> es multiplicar todos los números del 1 hasta n. Por ejemplo, <code>4! = 4·3·2·1 = 24</code> y por definición <code>0! = 1</code>.</p>
+  <p>La parte <span class="frac"><span>(2n)!</span><span>n!·n!</span></span> es la combinación <b>“2n en n”</b>, que se escribe <code>C(2n, n)</code> o <code>(2n n)</code>.</p>
+
+  <h3>Ejemplo paso a paso: C<sub>3</sub></h3>
+  <div class="steps">n = 3  →  2n = 6
+
+C₃ = 6! / (4! · 3!)
+   = 720 / (24 · 6)
+   = 720 / 144
+   = 5  ✅</div>
+
+  <h3>Otro ejemplo: C<sub>4</sub></h3>
+  <div class="steps">n = 4  →  2n = 8
+
+C₄ = 8! / (5! · 4!)
+   = 40320 / (120 · 24)
+   = 40320 / 2880
+   = 14  ✅</div>
+  <div class="tip"><b>Truco para no hacer cuentas enormes:</b> cancela antes de multiplicar. 8!/5! = 8·7·6 = 336, y luego 336 / 4! = 336 / 24 = 14.</div>
+</section>
+
+<!-- 3 -->
+<section id="recurrencia">
+  <h2><span class="num">3</span>La fórmula recursiva (construir con los anteriores)</h2>
+  <p>También podemos obtener cada número usando los que ya conocemos:</p>
+  <div class="formula">C<sub>0</sub> = 1 &nbsp;&nbsp;&nbsp; y &nbsp;&nbsp;&nbsp; C<sub>n+1</sub> = C<sub>0</sub>C<sub>n</sub> + C<sub>1</sub>C<sub>n−1</sub> + … + C<sub>n</sub>C<sub>0</sub></div>
+  <p>Es decir: multiplicas parejas que <b>suman n</b> en sus índices (uno sube, el otro baja) y sumas todo.</p>
+  <h3>Ejemplo: C<sub>4</sub></h3>
+  <div class="steps">C₄ = C₀·C₃ + C₁·C₂ + C₂·C₁ + C₃·C₀
+   =  1·5  +  1·2  +  2·1  +  5·1
+   =   5   +   2   +   2   +   5
+   =  14  ✅</div>
+  <div class="tip"><b>¿Por qué funciona?</b> Piensa en paréntesis: toda expresión correcta empieza con “(”. Ese paréntesis se cierra en algún lugar. Lo que queda <b>adentro</b> es una expresión correcta más pequeña y lo que queda <b>afuera</b> (a la derecha) también. Si adentro hay <i>k</i> pares y afuera <i>n−k</i>, hay C<sub>k</sub>·C<sub>n−k</sub> formas. Sumando todas las opciones de <i>k</i> sale la fórmula.</div>
+
+  <h3>Pruébalo tú</h3>
+  <div class="controls">
+    <label for="recN">Calcular C<sub>n</sub> con recurrencia, n =</label>
+    <input type="number" id="recN" min="1" max="15" value="5">
+    <button id="recBtn">Mostrar pasos</button>
+  </div>
+  <div class="steps" id="recOut"></div>
+</section>
+
+<!-- 4 -->
+<section id="parentesis">
+  <h2><span class="num">4</span>Aplicación 1: paréntesis bien balanceados</h2>
+  <p>¿De cuántas formas se pueden escribir <b>n</b> pares de paréntesis de forma correcta? “Correcta” significa que <b>nunca cierras un paréntesis que no abriste</b>.</p>
+  <ul>
+    <li><code>(())</code> ✅ correcto</li>
+    <li><code>())(</code> ❌ incorrecto: cierra antes de abrir</li>
+  </ul>
+  <p>Con n = 3 hay exactamente <b>5</b> formas: <code>((()))</code>, <code>(()())</code>, <code>(())()</code>, <code>()(())</code>, <code>()()()</code>.</p>
+  <div class="controls">
+    <label for="parN">Número de pares n =</label>
+    <input type="number" id="parN" min="1" max="6" value="3">
+    <button id="parBtn">Generar todas</button>
+    <span class="pill" id="parCount"></span>
+  </div>
+  <div class="grid" id="parOut"></div>
+</section>
+
+<!-- 5 -->
+<section id="montanas">
+  <h2><span class="num">5</span>Aplicación 2: montañas (caminos de Dyck)</h2>
+  <p>Dibuja una montaña con <b>n</b> subidas <span class="mono">/</span> y <b>n</b> bajadas <span class="mono">\</span>, <b>sin bajar nunca del suelo</b>. ¿Cuántas montañas distintas hay? ¡C<sub>n</sub>!</p>
+  <div class="tip"><b>Conexión:</b> cada “(” es una subida y cada “)” es una bajada. “No cerrar lo que no abriste” es lo mismo que “no bajar del suelo”. Por eso dan el mismo número.</div>
+  <div class="controls">
+    <label for="monN">n =</label>
+    <input type="number" id="monN" min="1" max="5" value="3">
+    <button id="monBtn">Dibujar montañas</button>
+    <span class="pill" id="monCount"></span>
+  </div>
+  <div class="grid" id="monOut"></div>
+</section>
+
+<!-- 6 -->
+<section id="poligonos">
+  <h2><span class="num">6</span>Aplicación 3: triangular un polígono</h2>
+  <p>Un polígono convexo con <b>n + 2</b> lados se puede dividir en triángulos trazando diagonales que <b>no se crucen</b>. El número de formas es <b>C<sub>n</sub></b>.</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Polígono</th><td>Triángulo (3)</td><td>Cuadrado (4)</td><td>Pentágono (5)</td><td>Hexágono (6)</td></tr>
+    <tr><th>n</th><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+    <tr><th>Formas</th><td>1</td><td>2</td><td>5</td><td>14</td></tr>
+  </table>
+  </div>
+  <div class="controls">
+    <label for="polN">Lados del polígono =</label>
+    <input type="number" id="polN" min="3" max="7" value="5">
+    <button id="polBtn">Ver triangulaciones</button>
+    <span class="pill" id="polCount"></span>
+  </div>
+  <div class="grid" id="polOut"></div>
+
+  <h3>Otras cosas que cuentan los números de Catalan</h3>
+  <div class="cards">
+    <div class="card"><h4>🌳 Árboles binarios</h4>Formas distintas de un árbol binario con n nodos.</div>
+    <div class="card"><h4>🤝 Saludos en una mesa</h4>2n personas en una mesa redonda se dan la mano por parejas sin que los brazos se crucen.</div>
+    <div class="card"><h4>✖️ Multiplicar en orden</h4>Formas de poner paréntesis a n+1 factores: con a·b·c·d hay 5 → (ab)(cd), ((ab)c)d, (a(bc))d, a((bc)d), a(b(cd)).</div>
+    <div class="card"><h4>🗺️ Caminos en cuadrícula</h4>Caminos de esquina a esquina en una cuadrícula n×n que no cruzan la diagonal.</div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="porque">
+  <h2><span class="num">7</span>¿Por qué funciona la fórmula? (explicación intuitiva)</h2>
+  <p>Usemos los paréntesis (o montañas). Tenemos <b>n</b> “(” y <b>n</b> “)”, o sea, <b>2n</b> símbolos.</p>
+  <ol>
+    <li><b>Todas las formas</b> de acomodarlos, sin importar si están bien o mal: elegir en qué <b>n</b> de los 2n lugares van los “(”. Eso es <code>C(2n, n)</code>.</li>
+    <li><b>Las formas malas</b> (que en algún momento “bajan del suelo”) resultan ser exactamente <code>C(2n, n+1)</code>. Esto se demuestra con un truco llamado <b>principio de reflexión</b>: en el primer momento en que el camino baja del suelo, se “refleja” (se invierten) todos los pasos que siguen, y cada camino malo se convierte en uno con n+1 bajadas y n−1 subidas, de forma única.</li>
+    <li><b>Las buenas = todas − malas.</b></li>
+  </ol>
+  <div class="formula">C<sub>n</sub> = C(2n, n) − C(2n, n+1)</div>
+  <div class="steps">Ejemplo con n = 3:
+Todas  = C(6,3) = 20
+Malas  = C(6,4) = 15
+Buenas = 20 − 15 = 5 ✅ (¡igual que antes!)</div>
+  <p>Si haces el álgebra de esa resta, se simplifica justo a <span class="frac"><span>1</span><span>n+1</span></span>·C(2n, n). Así nace la fórmula del punto 2.</p>
+</section>
+
+<!-- 8 -->
+<section id="calc">
+  <h2><span class="num">8</span>Calculadora con explicación</h2>
+  <div class="controls">
+    <label for="calcN">n =</label>
+    <input type="number" id="calcN" min="0" max="200" value="6">
+    <button id="calcBtn">Calcular C<sub>n</sub></button>
+  </div>
+  <div class="big" id="calcBig"></div>
+  <div class="steps" id="calcOut"></div>
+  <h3>Lista de los primeros números</h3>
+  <div class="table-wrap"><table id="firstTable"></table></div>
+</section>
+
+<!-- 9 -->
+<section id="cpp">
+  <h2><span class="num">9</span>Problemas resueltos en C++</h2>
+  <p>Aquí están los problemas típicos de programación con números de Catalan, del más sencillo al más “de concurso”. Cada uno tiene: <b>el enunciado</b>, <b>la idea</b>, <b>el código en C++</b>, <b>su complejidad</b> y un botón para ver <b>qué imprimiría el programa</b>.</p>
+  <div class="tip"><b>Cómo compilar y correr:</b> guarda el código como <code>catalan.cpp</code> y en la terminal escribe <code>g++ catalan.cpp -o catalan</code> y luego <code>./catalan</code> (en Windows: <code>catalan.exe</code>). También sirve cualquier compilador en línea, como OnlineGDB.</div>
+  <div id="probBox"></div>
+
+  <h3>Comparación de métodos</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Método</th><th>Tiempo</th><th>Memoria</th><th>¿Hasta qué n sin desbordar?</th><th>¿Cuándo usarlo?</th></tr>
+    <tr><td>Recursivo puro</td><td>Exponencial (≈ 3ⁿ)</td><td>O(n)</td><td>Muy lento desde n ≈ 18</td><td>Solo para entender la idea</td></tr>
+    <tr><td>Programación dinámica</td><td>O(n²)</td><td>O(n)</td><td>n = 35 con <code>unsigned long long</code></td><td>El más usado en clase</td></tr>
+    <tr><td>Fórmula binomial</td><td>O(n)</td><td>O(1)</td><td>n ≈ 31 (por los pasos intermedios)</td><td>El más rápido</td></tr>
+    <tr><td>DP con módulo</td><td>O(n²)</td><td>O(n)</td><td>Cualquiera (resultado mod 10⁹+7)</td><td>Concursos con n grande</td></tr>
+  </table>
+  </div>
+
+  <h3>Errores comunes (¡ojo!)</h3>
+  <ul class="check">
+    <li>Usar <code>int</code>: se desborda en C<sub>20</sub>. Usa <code>long long</code> o <code>unsigned long long</code>.</li>
+    <li>Olvidar el caso base <code>C[0] = 1</code>: todo sale 0.</li>
+    <li>En la fórmula, dividir antes de multiplicar: <code>c / (i+2) * ...</code> da resultados incorrectos porque la división entera trunca. Primero multiplica, luego divide.</li>
+    <li>Confundir los índices de la suma: es <code>C[k] * C[i-1-k]</code> (los índices suman <b>i−1</b>).</li>
+    <li>Usar la versión recursiva para n grande: tarda muchísimo porque recalcula lo mismo una y otra vez.</li>
+  </ul>
+</section>
+
+<!-- 10 -->
+<section id="quiz">
+  <h2><span class="num">10</span>Practica (con respuestas)</h2>
+  <div id="quizBox"></div>
+  <div class="score" id="score"></div>
+
+  <h3>Ejercicios para resolver en papel</h3>
+  <details><summary>1. Calcula C<sub>5</sub> con la fórmula directa</summary>
+    <div class="steps">C₅ = 10! / (6! · 5!)
+   = (10·9·8·7) / 5!     ← cancelando 6!
+   = 5040 / 120
+   = 42</div></details>
+  <details><summary>2. Calcula C<sub>5</sub> con la recurrencia</summary>
+    <div class="steps">C₅ = C₀C₄ + C₁C₃ + C₂C₂ + C₃C₁ + C₄C₀
+   = 14 + 5 + 4 + 5 + 14
+   = 42</div></details>
+  <details><summary>3. ¿De cuántas formas se puede triangular un heptágono (7 lados)?</summary>
+    <div class="steps">7 lados = n + 2  →  n = 5
+Respuesta: C₅ = 42 formas</div></details>
+  <details><summary>4. ¿Cuántas montañas hay con 4 subidas y 4 bajadas?</summary>
+    <div class="steps">n = 4  →  C₄ = 14 montañas</div></details>
+  <details><summary>5. ¿Cuál es el número que sigue: 1, 1, 2, 5, 14, 42, 132, ___?</summary>
+    <div class="steps">Es C₇ = 14! / (8! · 7!) = 429</div></details>
+</section>
+
+<!-- 11 -->
+<section id="resumen">
+  <h2><span class="num">11</span>Resumen para la clase</h2>
+  <ul class="check">
+    <li>Secuencia: <b>1, 1, 2, 5, 14, 42, 132, 429…</b> (empezando en C<sub>0</sub>).</li>
+    <li>Fórmula directa: <b>C<sub>n</sub> = (2n)! / ((n+1)! · n!)</b>.</li>
+    <li>Recurrencia: <b>C<sub>0</sub> = 1</b>, <b>C<sub>n+1</sub> = Σ C<sub>k</sub> · C<sub>n−k</sub></b> (k de 0 a n).</li>
+    <li>Otra forma: <b>C<sub>n</sub> = C(2n, n) − C(2n, n+1)</b> (todas menos las malas).</li>
+    <li>Cuentan: paréntesis balanceados, montañas que no bajan del suelo, triangulaciones de un polígono de n+2 lados, árboles binarios, saludos sin cruzarse.</li>
+    <li>En C++: la forma recomendada es <b>programación dinámica</b> con <code>C[i] += C[k] * C[i-1-k]</code>, O(n²); con módulo 10⁹+7 si n es grande.</li>
+    <li>La regla en común: <b>“nunca cruzar el límite”</b> (no cerrar antes de abrir, no bajar del suelo, no cruzar diagonales).</li>
+  </ul>
+  <div class="tip"><b>Frase para explicarlo en una línea:</b> “Los números de Catalan cuentan de cuántas maneras se pueden ordenar cosas que se abren y se cierran sin que nada se cierre antes de abrirse.”</div>
+  <p style="text-align:center;font-size:1.2rem;margin-top:18px">¡Mucha suerte mañana, Yaretzi! 💜</p>
+</section>
+
+</main>
+
+<footer>Guía de números de Catalan</footer>
+
+<script>
+// ---------- utilidades ----------
+const catalan = [1n];
+for (let n = 0; n < 200; n++) {
+  // C(n+1) = C(n) * 2(2n+1) / (n+2)
+  catalan.push(catalan[n] * BigInt(2 * (2 * n + 1)) / BigInt(n + 2));
+}
+const fact = n => { let r = 1n; for (let i = 2n; i <= BigInt(n); i++) r *= i; return r; };
+const sub = n => String(n).split("").map(d => "₀₁₂₃₄₅₆₇₈₉"[d]).join("");
+const clamp = (v, a, b) => Math.max(a, Math.min(b, isNaN(v) ? a : v));
+const fmt = b => b.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+function readN(id) {
+  const el = document.getElementById(id);
+  const v = clamp(parseInt(el.value, 10), +el.min, +el.max);
+  el.value = v;
+  return v;
+}
+
+// ---------- recurrencia ----------
+function showRec() {
+  const n = readN("recN");
+  const m = n - 1;
+  const terms = [], prods = [], vals = [];
+  for (let k = 0; k <= m; k++) {
+    terms.push(`C${sub(k)}·C${sub(m - k)}`);
+    prods.push(`${catalan[k]}·${catalan[m - k]}`);
+    vals.push(catalan[k] * catalan[m - k]);
+  }
+  document.getElementById("recOut").textContent =
+    `C${sub(n)} = ${terms.join(" + ")}\n` +
+    `   = ${prods.join(" + ")}\n` +
+    `   = ${vals.join(" + ")}\n` +
+    `   = ${catalan[n]}`;
+}
+
+// ---------- paréntesis ----------
+function genParens(n) {
+  const out = [];
+  (function go(s, open, close) {
+    if (s.length === 2 * n) { out.push(s); return; }
+    if (open < n) go(s + "(", open + 1, close);
+    if (close < open) go(s + ")", open, close + 1);
+  })("", 0, 0);
+  return out;
+}
+
+function showParens() {
+  const n = readN("parN");
+  const list = genParens(n);
+  document.getElementById("parCount").textContent = `${list.length} formas = C${sub(n)}`;
+  document.getElementById("parOut").innerHTML =
+    list.map((s, i) => `<div class="item"><small>#${i + 1}</small><span class="mono">${s}</span></div>`).join("");
+}
+
+// ---------- montañas ----------
+function mountainSVG(s) {
+  const step = 18, n = s.length / 2, h = n * step;
+  const W = s.length * step + 10, H = h + 20;
+  let x = 5, y = H - 8, pts = [`${x},${y}`];
+  for (const c of s) { x += step; y += c === "(" ? -step : step; pts.push(`${x},${y}`); }
+  const a = cssVar("--accent"), l = cssVar("--line");
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="montaña ${s}">
+    <line x1="0" y1="${H - 8}" x2="${W}" y2="${H - 8}" stroke="${l}" stroke-width="2"/>
+    <polyline points="${pts.join(" ")}" fill="none" stroke="${a}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function showMountains() {
+  const n = readN("monN");
+  const list = genParens(n);
+  document.getElementById("monCount").textContent = `${list.length} montañas = C${sub(n)}`;
+  document.getElementById("monOut").innerHTML =
+    list.map(s => `<div class="item"><span class="mono">${s}</span>${mountainSVG(s)}</div>`).join("");
+}
+
+// ---------- triangulaciones ----------
+function triangulations(i, j) {
+  if (j - i < 2) return [[]];
+  const res = [];
+  for (let k = i + 1; k < j; k++) {
+    for (const L of triangulations(i, k))
+      for (const R of triangulations(k, j))
+        res.push([...L, ...R, [i, k], [k, j]]);
+  }
+  return res;
+}
+
+function polygonSVG(m, edges) {
+  const S = 130, r = 52, c = S / 2;
+  const P = [...Array(m)].map((_, i) => {
+    const t = -Math.PI / 2 + (2 * Math.PI * i) / m;
+    return [c + r * Math.cos(t), c + r * Math.sin(t)];
+  });
+  const a = cssVar("--accent"), p = cssVar("--pink");
+  // sólo las diagonales (no los lados)
+  const diag = edges.filter(([u, v]) => Math.abs(u - v) !== 1 && Math.abs(u - v) !== m - 1);
+  const seen = new Set();
+  const lines = diag.filter(([u, v]) => { const k = u + "-" + v; if (seen.has(k)) return false; seen.add(k); return true; })
+    .map(([u, v]) => `<line x1="${P[u][0]}" y1="${P[u][1]}" x2="${P[v][0]}" y2="${P[v][1]}" stroke="${p}" stroke-width="2.5"/>`).join("");
+  return `<svg viewBox="0 0 ${S} ${S}" width="${S}" height="${S}" role="img" aria-label="triangulación">
+    <polygon points="${P.map(q => q.join(",")).join(" ")}" fill="none" stroke="${a}" stroke-width="3" stroke-linejoin="round"/>
+    ${lines}
+    ${P.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="3.5" fill="${a}"/>`).join("")}
+  </svg>`;
+}
+
+function showPolygons() {
+  const m = readN("polN");
+  const list = triangulations(0, m - 1);
+  document.getElementById("polCount").textContent = `${list.length} formas = C${sub(m - 2)}`;
+  document.getElementById("polOut").innerHTML =
+    list.map((e, i) => `<div class="item"><small>#${i + 1}</small><br>${polygonSVG(m, e)}</div>`).join("");
+}
+
+// ---------- calculadora ----------
+function showCalc() {
+  const n = readN("calcN");
+  const res = catalan[n];
+  document.getElementById("calcBig").textContent = `C${sub(n)} = ${fmt(res)}`;
+  let txt;
+  if (n <= 12) {
+    const a = fact(2 * n), b = fact(n + 1), c = fact(n);
+    txt = `Fórmula: C${sub(n)} = (2n)! / ((n+1)! · n!)\n\n` +
+      `n = ${n}  →  2n = ${2 * n}\n\n` +
+      `C${sub(n)} = ${2 * n}! / (${n + 1}! · ${n}!)\n` +
+      `   = ${fmt(a)} / (${fmt(b)} · ${fmt(c)})\n` +
+      `   = ${fmt(a)} / ${fmt(b * c)}\n` +
+      `   = ${fmt(res)}`;
+  } else {
+    txt = `Para n grande los factoriales son enormes, así que se usa el atajo:\n` +
+      `C(n+1) = C(n) · 2(2n+1) / (n+2)\n\n` +
+      `C${sub(n)} tiene ${res.toString().length} dígitos.`;
+  }
+  document.getElementById("calcOut").textContent = txt;
+}
+
+function buildFirstTable() {
+  let r1 = "<tr><th>n</th>", r2 = "<tr><th>C<sub>n</sub></th>";
+  for (let n = 0; n <= 12; n++) { r1 += `<td>${n}</td>`; r2 += `<td>${fmt(catalan[n])}</td>`; }
+  document.getElementById("firstTable").innerHTML = r1 + "</tr>" + r2 + "</tr>";
+}
+
+// ---------- quiz ----------
+const QUIZ = [
+  { q: "¿Cuánto vale C₄?", o: ["10", "14", "16", "42"], a: 1, e: "C₄ = 8!/(5!·4!) = 14." },
+  { q: "¿Cuántas formas hay de escribir 3 pares de paréntesis bien balanceados?", o: ["3", "5", "6", "9"], a: 1, e: "Es C₃ = 5." },
+  { q: "¿Cuál de estas expresiones de paréntesis es INCORRECTA?", o: ["(()())", "()(())", "())(()", "((()))"], a: 2, e: "En “())(()” se cierra un paréntesis antes de abrirlo (al tercer símbolo)." },
+  { q: "Un hexágono (6 lados) se puede triangular de cuántas formas?", o: ["5", "6", "14", "42"], a: 2, e: "6 lados → n = 4 → C₄ = 14." },
+  { q: "¿Cuál es la fórmula directa de Cₙ?", o: ["(2n)! / (n! · n!)", "(2n)! / ((n+1)! · n!)", "n! / (n+1)", "2ⁿ / (n+1)"], a: 1, e: "Cₙ = (2n)! / ((n+1)! · n!). La primera opción es C(2n,n), le falta dividir entre n+1." },
+  { q: "Usando la recurrencia, C₃ = C₀C₂ + C₁C₁ + C₂C₀ = ?", o: ["2 + 1 + 2 = 5", "1 + 1 + 1 = 3", "2 + 2 + 2 = 6", "1 + 2 + 1 = 4"], a: 0, e: "C₀C₂ = 1·2 = 2, C₁C₁ = 1·1 = 1, C₂C₀ = 2·1 = 2 → 5." },
+  { q: "Con n = 3: total de arreglos C(6,3) = 20 y malos C(6,4) = 15. ¿Cuántos buenos?", o: ["35", "15", "5", "20"], a: 2, e: "Buenos = todos − malos = 20 − 15 = 5." },
+  { q: "¿Qué número sigue? 1, 1, 2, 5, 14, 42, …", o: ["84", "100", "132", "128"], a: 2, e: "C₆ = 132." },
+  { q: "En C++, ¿cuál es la complejidad de calcular Cₙ con programación dinámica?", o: ["O(n)", "O(n²)", "O(2ⁿ)", "O(log n)"], a: 1, e: "Hay dos ciclos anidados (i y k), por eso es O(n²)." },
+  { q: "En la DP, ¿qué línea va dentro del ciclo?", o: ["C[i] += C[k] * C[i-1-k];", "C[i] = C[k] + C[i-k];", "C[i] *= C[k];", "C[i] += C[i-1];"], a: 0, e: "Es la recurrencia: se suman los productos C[k]·C[i−1−k]." },
+  { q: "¿Qué tipo de dato conviene usar para guardar C₃₀ en C++?", o: ["int", "float", "char", "unsigned long long"], a: 3, e: "C₃₀ ≈ 3.8 × 10¹⁵, no cabe en int (máx ≈ 2.1 × 10⁹)." },
+  { q: "En el generador de paréntesis, ¿cuándo se puede poner un “)”?", o: ["Siempre", "Cuando cerrados < abiertos", "Cuando abiertos < n", "Solo al final"], a: 1, e: "Solo puedes cerrar si hay un paréntesis abierto sin cerrar." }
+];
+let answered = 0, correct = 0;
+
+function buildQuiz() {
+  const box = document.getElementById("quizBox");
+  QUIZ.forEach((item, qi) => {
+    const div = document.createElement("div");
+    div.className = "quiz-q";
+    div.innerHTML = `<b>${qi + 1}. ${item.q}</b><div class="opts"></div><div class="fb"></div>`;
+    const opts = div.querySelector(".opts"), fb = div.querySelector(".fb");
+    item.o.forEach((txt, oi) => {
+      const b = document.createElement("button");
+      b.textContent = txt;
+      b.addEventListener("click", () => {
+        if (div.dataset.done) return;
+        div.dataset.done = "1";
+        answered++;
+        const ok = oi === item.a;
+        if (ok) correct++;
+        b.classList.add(ok ? "ok" : "bad");
+        opts.children[item.a].classList.add("ok");
+        fb.className = "fb " + (ok ? "ok" : "bad");
+        fb.textContent = (ok ? "¡Correcto! " : "Casi. ") + item.e;
+        updateScore();
+      });
+      opts.appendChild(b);
+    });
+    box.appendChild(div);
+  });
+  const reset = document.createElement("button");
+  reset.className = "ghost";
+  reset.textContent = "Reiniciar preguntas";
+  reset.addEventListener("click", () => { box.innerHTML = ""; answered = correct = 0; buildQuiz(); updateScore(); });
+  box.appendChild(reset);
+}
+
+function updateScore() {
+  const s = document.getElementById("score");
+  if (!answered) { s.textContent = ""; return; }
+  s.textContent = `Llevas ${correct} de ${answered} correctas` +
+    (answered === QUIZ.length ? (correct === QUIZ.length ? " — ¡perfecto, lista para la clase! 🎉" : " — repasa las que fallaste y vuelve a intentar 💪") : "");
+}
+
+// ---------- problemas en C++ ----------
+const PROBLEMS = [
+  {
+    title: "Problema 1: Calcular Cₙ con recursión",
+    tags: ["Básico", "Recursión"],
+    statement: "Lee un número n e imprime el n-ésimo número de Catalan usando directamente la fórmula recursiva.",
+    idea: "Traducimos la recurrencia tal cual: C₀ = C₁ = 1 y Cₙ = Σ C(k)·C(n−1−k). La función se llama a sí misma para los valores más chicos.",
+    complexity: "Tiempo exponencial (recalcula muchísimas veces lo mismo). Funciona bien solo para n pequeño (≤ 15 aprox.).",
+    code: String.raw`#include <iostream>
+using namespace std;
+
+// Cn = suma de C(k) * C(n-1-k), con k de 0 a n-1
+long long catalan(int n) {
+    if (n <= 1) return 1;            // caso base: C0 = C1 = 1
+    long long total = 0;
+    for (int k = 0; k < n; k++)
+        total += catalan(k) * catalan(n - 1 - k);
+    return total;
+}
+
+int main() {
+    int n;
+    cout << "Ingresa n: ";
+    cin >> n;
+    cout << "C" << n << " = " << catalan(n) << endl;
+    return 0;
+}`,
+    min: 0, max: 15, def: 5,
+    run: n => `Ingresa n: ${n}\nC${n} = ${catalan[n]}`
+  },
+  {
+    title: "Problema 2: Los primeros n números con programación dinámica",
+    tags: ["Recomendado", "DP"],
+    statement: "Lee n e imprime C₀, C₁, …, Cₙ de forma eficiente.",
+    idea: "En lugar de recalcular, guardamos cada Cᵢ en un arreglo (vector) y lo reutilizamos. Para calcular C[i] solo necesitamos los anteriores, que ya están guardados.",
+    complexity: "Tiempo O(n²) por los dos ciclos anidados, memoria O(n). Con unsigned long long llega sin desbordarse hasta n = 35.",
+    code: String.raw`#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+
+    vector<unsigned long long> C(n + 1, 0);
+    C[0] = 1;                                 // caso base
+
+    for (int i = 1; i <= n; i++)              // calculamos C1, C2, ..., Cn
+        for (int k = 0; k < i; k++)           // C[i] = suma de C[k] * C[i-1-k]
+            C[i] += C[k] * C[i - 1 - k];
+
+    for (int i = 0; i <= n; i++)
+        cout << "C" << i << " = " << C[i] << "\n";
+    return 0;
+}`,
+    min: 0, max: 35, def: 10,
+    run: n => [...Array(n + 1)].map((_, i) => `C${i} = ${catalan[i]}`).join("\n")
+  },
+  {
+    title: "Problema 3: Cₙ con la fórmula del coeficiente binomial",
+    tags: ["Rápido", "Fórmula"],
+    statement: "Calcula Cₙ usando Cₙ = C(2n, n) / (n + 1) en tiempo lineal.",
+    idea: "Calculamos C(2n, n) multiplicando y dividiendo poco a poco: en cada paso el resultado sigue siendo entero, así evitamos los factoriales gigantes. Al final dividimos entre n + 1.",
+    complexity: "Tiempo O(n), memoria O(1). Los pasos intermedios crecen, así que es seguro hasta n ≈ 31 con unsigned long long.",
+    code: String.raw`#include <iostream>
+using namespace std;
+
+// Coeficiente binomial C(a, b) sin usar factoriales
+unsigned long long binomial(int a, int b) {
+    unsigned long long res = 1;
+    for (int i = 0; i < b; i++) {
+        res = res * (a - i);     // primero multiplicamos...
+        res = res / (i + 1);     // ...luego dividimos (siempre es exacto)
+    }
+    return res;
+}
+
+unsigned long long catalan(int n) {
+    return binomial(2 * n, n) / (n + 1);
+}
+
+int main() {
+    int n;
+    cin >> n;
+    cout << "C(" << 2 * n << ", " << n << ") = " << binomial(2 * n, n) << "\n";
+    cout << "C" << n << " = " << catalan(n) << endl;
+    return 0;
+}`,
+    min: 0, max: 31, def: 6,
+    run: n => {
+      let b = 1n; for (let i = 0; i < n; i++) b = b * BigInt(2 * n - i) / BigInt(i + 1);
+      return `C(${2 * n}, ${n}) = ${b}\nC${n} = ${catalan[n]}`;
+    }
+  },
+  {
+    title: "Problema 4: Generar todos los paréntesis balanceados",
+    tags: ["Backtracking", "Clásico de entrevistas"],
+    statement: "Dado n, imprime todas las cadenas de n pares de paréntesis bien balanceados y cuántas son.",
+    idea: "Construimos la cadena símbolo por símbolo. Podemos poner “(” si aún no usamos los n; y podemos poner “)” solo si hay más abiertos que cerrados (así nunca cerramos algo que no abrimos). El total siempre es Cₙ.",
+    complexity: "Tiempo proporcional a Cₙ · n (hay Cₙ cadenas de largo 2n).",
+    code: String.raw`#include <iostream>
+#include <string>
+using namespace std;
+
+int n, contador = 0;
+
+// abiertos = cuántos "(" llevamos, cerrados = cuántos ")"
+void generar(string s, int abiertos, int cerrados) {
+    if ((int)s.size() == 2 * n) {           // ya usamos los 2n símbolos
+        cout << s << "\n";
+        contador++;
+        return;
+    }
+    if (abiertos < n)                       // todavía podemos abrir
+        generar(s + "(", abiertos + 1, cerrados);
+    if (cerrados < abiertos)                // solo cerramos si hay algo abierto
+        generar(s + ")", abiertos, cerrados + 1);
+}
+
+int main() {
+    cin >> n;
+    generar("", 0, 0);
+    cout << "Total: " << contador << endl;
+    return 0;
+}`,
+    min: 1, max: 6, def: 3,
+    run: n => { const l = genParens(n); return l.join("\n") + `\nTotal: ${l.length}`; }
+  },
+  {
+    title: "Problema 5: Contar árboles binarios de búsqueda distintos",
+    tags: ["DP", "Árboles"],
+    statement: "¿Cuántos árboles binarios de búsqueda (BST) distintos se pueden formar con los valores 1, 2, …, n?",
+    idea: "Elegimos qué valor es la raíz (r). Los valores menores (r − 1 de ellos) van a la izquierda y los mayores (n − r) a la derecha. Formas = árboles(izquierda) × árboles(derecha). Sumando sobre todas las raíces sale exactamente la recurrencia de Catalan.",
+    complexity: "Tiempo O(n²), memoria O(n).",
+    code: String.raw`#include <iostream>
+#include <vector>
+using namespace std;
+
+long long contarArboles(int n) {
+    vector<long long> dp(n + 1, 0);
+    dp[0] = 1;                                    // árbol vacío: 1 forma
+
+    for (int nodos = 1; nodos <= n; nodos++)
+        for (int raiz = 1; raiz <= nodos; raiz++) {
+            int izquierda = raiz - 1;             // valores menores que la raíz
+            int derecha = nodos - raiz;           // valores mayores que la raíz
+            dp[nodos] += dp[izquierda] * dp[derecha];
+        }
+    return dp[n];
+}
+
+int main() {
+    int n;
+    cin >> n;
+    cout << "Con " << n << " nodos hay " << contarArboles(n) << " BST distintos" << endl;
+    return 0;
+}`,
+    min: 0, max: 35, def: 3,
+    run: n => `Con ${n} nodos hay ${catalan[n]} BST distintos`
+  },
+  {
+    title: "Problema 6: Caminos en una cuadrícula que no cruzan la diagonal",
+    tags: ["DP en 2D", "Caminos"],
+    statement: "En una cuadrícula de n × n, vas de la esquina (0,0) a (n,n) dando pasos a la derecha o hacia arriba, sin pasar nunca por encima de la diagonal. ¿Cuántos caminos hay?",
+    idea: "camino[i][j] = formas de llegar a la casilla con i pasos a la derecha y j hacia arriba. Solo son válidas las casillas con j ≤ i. A cada casilla se llega desde la izquierda o desde abajo, así que sumamos ambas.",
+    complexity: "Tiempo O(n²), memoria O(n²).",
+    code: String.raw`#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n;
+    cin >> n;
+    // camino[i][j]: i = pasos a la derecha, j = pasos hacia arriba
+    vector<vector<long long>> camino(n + 1, vector<long long>(n + 1, 0));
+    camino[0][0] = 1;
+
+    for (int i = 0; i <= n; i++)
+        for (int j = 0; j <= i; j++) {            // solo debajo (o sobre) la diagonal
+            if (i == 0 && j == 0) continue;
+            long long desdeIzq   = (j <= i - 1) ? camino[i - 1][j] : 0;
+            long long desdeAbajo = (j > 0)      ? camino[i][j - 1] : 0;
+            camino[i][j] = desdeIzq + desdeAbajo;
+        }
+
+    cout << "Caminos validos: " << camino[n][n] << endl;
+    return 0;
+}`,
+    min: 0, max: 30, def: 4,
+    run: n => `Caminos validos: ${catalan[n]}`
+  },
+  {
+    title: "Problema 7: Cₙ módulo 10⁹ + 7 (para n muy grande)",
+    tags: ["Concursos", "Aritmética modular"],
+    statement: "Calcula Cₙ mod 1 000 000 007 para n hasta 1000 o más (el número real sería gigantesco).",
+    idea: "Es la misma DP del problema 2, pero después de cada operación nos quedamos con el residuo (% MOD). Así los números nunca crecen más de lo que cabe en long long.",
+    complexity: "Tiempo O(n²), memoria O(n).",
+    code: String.raw`#include <iostream>
+#include <vector>
+using namespace std;
+
+const long long MOD = 1000000007;
+
+int main() {
+    int n;
+    cin >> n;
+    vector<long long> C(n + 1, 0);
+    C[0] = 1;
+
+    for (int i = 1; i <= n; i++)
+        for (int k = 0; k < i; k++)
+            C[i] = (C[i] + C[k] * C[i - 1 - k]) % MOD;
+
+    cout << "C" << n << " mod 1e9+7 = " << C[n] << endl;
+    return 0;
+}`,
+    min: 0, max: 200, def: 100,
+    run: n => `C${n} mod 1e9+7 = ${catalan[n] % 1000000007n}`
+  }
+];
+
+function highlight(code) {
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*")|(#\w+(?:\s*<[^>\n]*>)?)|\b(if|for|return|while|else|using|namespace|const|void|continue)\b|\b(int|long|unsigned|string|vector|bool|cout|cin|endl|std)\b|\b(\d+)\b/g;
+  let out = "", last = 0, m;
+  const cls = ["", "cm", "st", "pp", "kw", "ty", "nu"];
+  while ((m = re.exec(code))) {
+    out += esc(code.slice(last, m.index));
+    const g = cls.findIndex((_, i) => i && m[i] !== undefined);
+    out += `<span class="${cls[g]}">${esc(m[0])}</span>`;
+    last = re.lastIndex;
+  }
+  return out + esc(code.slice(last));
+}
+
+function buildProblems() {
+  const box = document.getElementById("probBox");
+  PROBLEMS.forEach((p, i) => {
+    const d = document.createElement("div");
+    d.className = "prob";
+    d.innerHTML = `
+      <h3>${p.title}</h3>
+      <div>${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+      <p><b>Enunciado:</b> ${p.statement}</p>
+      <p><b>Idea:</b> ${p.idea}</p>
+      <div class="code-wrap"><button class="copy">Copiar</button><pre class="cpp">${highlight(p.code)}</pre></div>
+      <p><b>Complejidad:</b> ${p.complexity}</p>
+      <div class="controls">
+        <label for="pin${i}">Entrada n =</label>
+        <input type="number" id="pin${i}" min="${p.min}" max="${p.max}" value="${p.def}">
+        <button id="prun${i}">▶ Ver salida</button>
+      </div>
+      <div class="term" id="pout${i}"></div>`;
+    box.appendChild(d);
+    const copyBtn = d.querySelector(".copy");
+    copyBtn.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(p.code); copyBtn.textContent = "¡Copiado!"; }
+      catch { copyBtn.textContent = "Selecciona y copia"; }
+      setTimeout(() => copyBtn.textContent = "Copiar", 1500);
+    });
+    const run = () => { document.getElementById(`pout${i}`).textContent = p.run(readN(`pin${i}`)); };
+    bind(`prun${i}`, `pin${i}`, run);
+    run();
+  });
+}
+
+// ---------- eventos ----------
+const bind = (btn, input, fn) => {
+  document.getElementById(btn).addEventListener("click", fn);
+  document.getElementById(input).addEventListener("keydown", e => { if (e.key === "Enter") fn(); });
+};
+bind("recBtn", "recN", showRec);
+bind("parBtn", "parN", showParens);
+bind("monBtn", "monN", showMountains);
+bind("polBtn", "polN", showPolygons);
+bind("calcBtn", "calcN", showCalc);
+
+const redrawAll = () => { showRec(); showParens(); showMountains(); showPolygons(); showCalc(); };
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", redrawAll);
+
+buildFirstTable();
+buildQuiz();
+buildProblems();
+redrawAll();
+</script>
+</body>
+</html>
